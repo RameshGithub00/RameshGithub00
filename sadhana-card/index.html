@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Daily chanting sadhana card recorder" />
+    <meta name="theme-color" content="#e8d9a8" />
+    <title>Sadhana Card — Chanting Recorder</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --surface: #fffdf8;
+        --ink: #1a1a1a;
+        --muted: #5c564c;
+        --accent: #8b6914;
+        --header: #e8d9a8;
+        --border: #2a2a2a;
+        --shadow: 0 12px 40px rgba(42, 32, 10, 0.12);
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #faf6ee, var(--bg));
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid #c9b88a;
+        background: var(--surface);
+        border-radius: 8px;
+        padding: 0.45rem 0.7rem;
+      }
+      button:active {
+        transform: scale(0.98);
+      }
+      .app {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 1rem 0.75rem 2.5rem;
+      }
+      .toolbar {
+        margin-bottom: 1rem;
+      }
+      .app-name {
+        margin: 0;
+        font-size: 1.25rem;
+        color: var(--accent);
+      }
+      .app-tagline {
+        margin: 0.15rem 0 0.75rem;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+      .toolbar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        align-items: center;
+      }
+      .month-label {
+        min-width: 6.5rem;
+        text-align: center;
+        font-weight: 600;
+      }
+      .settings {
+        display: none;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: end;
+        padding: 0.75rem 1rem;
+        background: var(--surface);
+        border: 1px solid #ddd3bc;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+      .settings.open {
+        display: flex;
+      }
+      .settings label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .settings input[type='number'] {
+        width: 6rem;
+        padding: 0.35rem 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      .danger {
+        border-color: #c44;
+        color: #922;
+      }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .sadhana-card {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 1rem 0.65rem;
+        border-radius: 4px;
+      }
+      .card-title {
+        text-align: center;
+        margin: 0 0 1rem;
+        font-size: clamp(1.1rem, 4vw, 1.5rem);
+        font-weight: 700;
+      }
+      .card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        margin-bottom: 1rem;
+      }
+      .meta-field {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        flex: 1 1 12rem;
+      }
+      .meta-field span {
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .meta-field input {
+        flex: 1;
+        border: none;
+        border-bottom: 1px solid #999;
+        background: transparent;
+        min-width: 0;
+        padding: 0.15rem 0.25rem;
+      }
+      .grid-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .sadhana-grid {
+        width: 100%;
+        min-width: 520px;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+      .sadhana-grid th,
+      .sadhana-grid td {
+        border: 1px solid var(--border);
+        text-align: center;
+        vertical-align: middle;
+      }
+      .sadhana-grid th.col-group {
+        background: var(--header);
+        padding: 0;
+      }
+      .pair-head {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .pair-head span {
+        padding: 0.35rem 0.2rem;
+        border-right: 1px solid var(--border);
+      }
+      .pair-head span:last-child {
+        border-right: none;
+      }
+      .cell.date {
+        font-size: 0.85rem;
+        padding: 0.2rem;
+        background: #fff;
+      }
+      .cell.count {
+        padding: 0;
+        background: #fff;
+      }
+      .cell.empty {
+        background: #fafafa;
+      }
+      .count-input {
+        width: 100%;
+        border: none;
+        text-align: center;
+        padding: 0.45rem 0.2rem;
+        background: transparent;
+        font-size: 0.9rem;
+        min-height: 2.25rem;
+      }
+      .count-input:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: -2px;
+        background: #fffef5;
+      }
+      .hint {
+        margin: 0.75rem 0 0;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      #import-file {
+        display: none;
+      }
+      @media print {
+        .print-hide {
+          display: none !important;
+        }
+        body {
+          background: white;
+        }
+        .app {
+          max-width: none;
+          padding: 0;
+        }
+        .sadhana-card {
+          box-shadow: none;
+          border-width: 1px;
+        }
+        .count-input {
+          border: none;
+        }
+        .meta-field input {
+          border-bottom: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="toolbar print-hide">
+        <h1 class="app-name">Sadhana Recorder</h1>
+        <p class="app-tagline">Daily chanting log — saved on this device</p>
+        <div class="toolbar-actions">
+          <button type="button" id="btn-prev" aria-label="Previous month">←</button>
+          <span class="month-label" id="month-nav-label"></span>
+          <button type="button" id="btn-next" aria-label="Next month">→</button>
+          <button type="button" id="btn-today">Today</button>
+          <button type="button" id="btn-fill">Fill empty</button>
+          <button type="button" id="btn-print">Print</button>
+          <button type="button" id="btn-export">Export</button>
+          <button type="button" id="btn-import">Import</button>
+          <button type="button" id="btn-settings">Settings</button>
+          <input type="file" id="import-file" accept="application/json" />
+        </div>
+      </header>
+
+      <section class="settings print-hide" id="settings-panel">
+        <label>
+          Default daily count
+          <input type="number" id="setting-default" min="0" />
+        </label>
+        <label>
+          Ekadashi count
+          <input type="number" id="setting-ekadashi" min="0" />
+        </label>
+        <button type="button" class="danger" id="btn-clear-month">Clear this month</button>
+      </section>
+
+      <section class="stats print-hide" id="stats"></section>
+
+      <article class="sadhana-card" id="card" aria-live="polite">
+        <h2 class="card-title" id="card-title"></h2>
+        <div class="card-meta">
+          <label class="meta-field">
+            <span>Name:</span>
+            <input type="text" id="profile-name" placeholder="Your name" />
+          </label>
+          <label class="meta-field">
+            <span>Subject:</span>
+            <input type="text" id="profile-subject" />
+          </label>
+        </div>
+        <div class="grid-wrap">
+          <table class="sadhana-grid" id="grid">
+            <thead id="grid-head"></thead>
+            <tbody id="grid-body"></tbody>
+          </table>
+        </div>
+        <p class="hint print-hide" id="ekadashi-hint"></p>
+      </article>
+    </div>
+
+    <script>
+      const MONTH_NAMES = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      ]
+      const STORAGE_KEY = 'sadhana-card-data-v1'
+
+      const state = {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth(),
+        data: loadData(),
+      }
+
+      function defaultProfile() {
+        return { name: '', subject: 'Chanting', defaultCount: 5, ekadashiCount: 16 }
+      }
+
+      function loadData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY)
+          if (!raw) return { profile: defaultProfile(), months: {} }
+          const parsed = JSON.parse(raw)
+          return {
+            profile: { ...defaultProfile(), ...parsed.profile },
+            months: parsed.months || {},
+          }
+        } catch {
+          return { profile: defaultProfile(), months: {} }
+        }
+      }
+
+      function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data))
+      }
+
+      function monthKey(year, month) {
+        return `${year}-${String(month + 1).padStart(2, '0')}`
+      }
+
+      function daysInMonth(year, month) {
+        return new Date(year, month + 1, 0).getDate()
+      }
+
+      function monthTitle(year, month) {
+        return `${MONTH_NAMES[month]} ${year} Sadhana Card`
+      }
+
+      function formatDayLabel(month, day) {
+        return `${day}-${MONTH_NAMES[month]}`
+      }
+
+      function buildColumns(year, month) {
+        const total = daysInMonth(year, month)
+        const first = Math.floor(total / 3) + 1
+        const second = first
+        const third = total - first - second
+        const sizes = [first, second, third]
+        const columns = [[], [], []]
+        let day = 1
+        for (let c = 0; c < 3; c++) {
+          for (let i = 0; i < sizes[c]; i++) columns[c].push(day++)
+        }
+        return columns
+      }
+
+      function parseCountValue(text) {
+        const trimmed = String(text || '').trim()
+        if (!trimmed) return null
+        const match = trimmed.match(/(\d+(?:\.\d+)?)\s*$/)
+        return match ? Number(match[1]) : null
+      }
+
+      function getMonthEntries() {
+        const key = monthKey(state.year, state.month)
+        if (!state.data.months[key]) state.data.months[key] = { entries: {} }
+        return state.data.months[key].entries
+      }
+
+      function setEntry(day, value) {
+        const entries = getMonthEntries()
+        if (!String(value).trim()) delete entries[day]
+        else entries[day] = String(value)
+        saveData()
+        updateStats()
+      }
+
+      function markEkadashi(day) {
+        const n = state.data.profile.ekadashiCount
+        setEntry(day, `Ekadashi ${n}`)
+        const input = document.querySelector(`[data-day="${day}"]`)
+        if (input) input.value = `Ekadashi ${n}`
+      }
+
+      function bindLongPressEkadashi(input, day) {
+        let timer = null
+        input.addEventListener('touchstart', (e) => {
+          timer = setTimeout(() => {
+            e.preventDefault()
+            markEkadashi(day)
+            if (navigator.vibrate) navigator.vibrate(30)
+          }, 550)
+        }, { passive: false })
+        input.addEventListener('touchend', () => clearTimeout(timer))
+        input.addEventListener('touchmove', () => clearTimeout(timer))
+        input.addEventListener('contextmenu', (e) => {
+          e.preventDefault()
+          markEkadashi(day)
+        })
+      }
+
+      function updateStats() {
+        const entries = getMonthEntries()
+        const totalDays = daysInMonth(state.year, state.month)
+        let filled = 0
+        let sum = 0
+        for (const v of Object.values(entries)) {
+          const n = parseCountValue(v)
+          if (n !== null) {
+            filled++
+            sum += n
+          }
+        }
+        document.getElementById('stats').innerHTML =
+          `<span>Logged: <strong>${filled}</strong> / ${totalDays} days</span>` +
+          `<span>Total count: <strong>${sum}</strong></span>`
+      }
+
+      function renderGrid() {
+        const columns = buildColumns(state.year, state.month)
+        const maxRows = Math.max(...columns.map((c) => c.length))
+        const entries = getMonthEntries()
+
+        document.getElementById('card-title').textContent = monthTitle(state.year, state.month)
+        document.getElementById('month-nav-label').textContent =
+          `${MONTH_NAMES[state.month]} ${state.year}`
+
+        const head = document.getElementById('grid-head')
+        head.innerHTML = `<tr>${[0, 1, 2].map(
+          (i) =>
+            `<th class="col-group" colspan="2"><div class="pair-head"><span>Date</span><span>Count</span></div></th>`,
+        ).join('')}</tr>`
+
+        const body = document.getElementById('grid-body')
+        body.innerHTML = ''
+        for (let row = 0; row < maxRows; row++) {
+          const tr = document.createElement('tr')
+          for (let col = 0; col < 3; col++) {
+            const day = columns[col][row]
+            if (day === undefined) {
+              tr.innerHTML += '<td class="cell date empty"></td><td class="cell count empty"></td>'
+              continue
+            }
+            const tdDate = document.createElement('td')
+            tdDate.className = 'cell date'
+            tdDate.textContent = formatDayLabel(state.month, day)
+
+            const tdCount = document.createElement('td')
+            tdCount.className = 'cell count'
+            const input = document.createElement('input')
+            input.type = 'text'
+            input.className = 'count-input'
+            input.value = entries[day] || ''
+            input.dataset.day = String(day)
+            input.setAttribute('aria-label', `Count for ${formatDayLabel(state.month, day)}`)
+            input.addEventListener('change', () => setEntry(day, input.value))
+            input.addEventListener('blur', () => setEntry(day, input.value))
+            bindLongPressEkadashi(input, day)
+
+            tdCount.appendChild(input)
+            tr.appendChild(tdDate)
+            tr.appendChild(tdCount)
+          }
+          body.appendChild(tr)
+        }
+
+        const p = state.data.profile
+        document.getElementById('ekadashi-hint').textContent =
+          `Tip: long-press (mobile) or right-click a count cell for Ekadashi (${p.ekadashiCount}).`
+
+        updateStats()
+      }
+
+      function syncProfileInputs() {
+        const p = state.data.profile
+        document.getElementById('profile-name').value = p.name
+        document.getElementById('profile-subject').value = p.subject
+        document.getElementById('setting-default').value = p.defaultCount
+        document.getElementById('setting-ekadashi').value = p.ekadashiCount
+        document.getElementById('btn-fill').textContent =
+          `Fill empty (${p.defaultCount})`
+      }
+
+      function shiftMonth(delta) {
+        const d = new Date(state.year, state.month + delta, 1)
+        state.year = d.getFullYear()
+        state.month = d.getMonth()
+        renderGrid()
+      }
+
+      document.getElementById('btn-prev').addEventListener('click', () => shiftMonth(-1))
+      document.getElementById('btn-next').addEventListener('click', () => shiftMonth(1))
+      document.getElementById('btn-today').addEventListener('click', () => {
+        const now = new Date()
+        state.year = now.getFullYear()
+        state.month = now.getMonth()
+        renderGrid()
+      })
+
+      document.getElementById('btn-fill').addEventListener('click', () => {
+        const entries = getMonthEntries()
+        const def = String(state.data.profile.defaultCount)
+        const total = daysInMonth(state.year, state.month)
+        for (let d = 1; d <= total; d++) {
+          if (!entries[d]?.trim()) entries[d] = def
+        }
+        saveData()
+        renderGrid()
+      })
+
+      document.getElementById('btn-print').addEventListener('click', () => window.print())
+      document.getElementById('btn-settings').addEventListener('click', () => {
+        document.getElementById('settings-panel').classList.toggle('open')
+      })
+
+      document.getElementById('btn-clear-month').addEventListener('click', () => {
+        if (!confirm('Clear all entries for this month?')) return
+        const key = monthKey(state.year, state.month)
+        delete state.data.months[key]
+        saveData()
+        renderGrid()
+      })
+
+      document.getElementById('profile-name').addEventListener('input', (e) => {
+        state.data.profile.name = e.target.value
+        saveData()
+      })
+      document.getElementById('profile-subject').addEventListener('input', (e) => {
+        state.data.profile.subject = e.target.value
+        saveData()
+      })
+      document.getElementById('setting-default').addEventListener('change', (e) => {
+        state.data.profile.defaultCount = Number(e.target.value) || 0
+        saveData()
+        syncProfileInputs()
+      })
+      document.getElementById('setting-ekadashi').addEventListener('change', (e) => {
+        state.data.profile.ekadashiCount = Number(e.target.value) || 0
+        saveData()
+        syncProfileInputs()
+        renderGrid()
+      })
+
+      document.getElementById('btn-export').addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(state.data, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `sadhana-backup-${monthKey(state.year, state.month)}.json`
+        a.click()
+        URL.revokeObjectURL(url)
+      })
+
+      document.getElementById('btn-import').addEventListener('click', () => {
+        document.getElementById('import-file').click()
+      })
+      document.getElementById('import-file').addEventListener('change', (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        file.text().then((text) => {
+          try {
+            const parsed = JSON.parse(text)
+            state.data = {
+              profile: { ...defaultProfile(), ...parsed.profile },
+              months: parsed.months || {},
+            }
+            saveData()
+            syncProfileInputs()
+            renderGrid()
+          } catch {
+            alert('Could not read backup file.')
+          }
+        })
+        e.target.value = ''
+      })
+
+      syncProfileInputs()
+      renderGrid()
+    </script>
+  </body>
+</html>
