@@ -1,0 +1,245 @@
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.app-name {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--accent);
+}
+
+.app-tagline {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.toolbar-actions button {
+  border: 1px solid #c9b88a;
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 0.35rem 0.65rem;
+}
+
+.toolbar-actions button:hover {
+  background: #fff;
+}
+
+.month-label {
+  min-width: 7rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: end;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid #ddd3bc;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.settings label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.settings input {
+  width: 6rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.settings .danger {
+  border-color: #c44;
+  color: #922;
+}
+
+.stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.sadhana-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1rem 1rem;
+  border-radius: 4px;
+}
+
+.card-title {
+  text-align: center;
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.meta-field {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.meta-field span {
+  font-weight: 600;
+}
+
+.meta-field input {
+  border: none;
+  border-bottom: 1px solid #999;
+  background: transparent;
+  min-width: 12rem;
+  padding: 0.15rem 0.25rem;
+}
+
+.grid-wrap {
+  overflow-x: auto;
+}
+
+.sadhana-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.sadhana-grid th,
+.sadhana-grid td {
+  border: 1px solid var(--border);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.sadhana-grid th.col-group {
+  background: var(--header);
+  padding: 0;
+}
+
+.pair-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.pair-head span {
+  padding: 0.35rem 0.25rem;
+  border-right: 1px solid var(--border);
+}
+
+.pair-head span:last-child {
+  border-right: none;
+}
+
+.cell.date {
+  width: 28%;
+  font-size: 0.9rem;
+  padding: 0.2rem;
+  background: #fff;
+}
+
+.cell.count {
+  width: 22%;
+  padding: 0;
+  background: #fff;
+}
+
+.cell.empty {
+  background: #fafafa;
+}
+
+.count-input {
+  width: 100%;
+  border: none;
+  text-align: center;
+  padding: 0.35rem 0.2rem;
+  background: transparent;
+  font-size: 0.9rem;
+}
+
+.count-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  background: #fffef5;
+}
+
+.hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .card-title {
+    font-size: 1.2rem;
+  }
+
+  .sadhana-grid {
+    font-size: 0.85rem;
+  }
+}
+
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  .app {
+    max-width: none;
+    padding: 0;
+  }
+
+  .sadhana-card {
+    box-shadow: none;
+    border-width: 1px;
+  }
+
+  .count-input {
+    border: none;
+  }
+
+  .meta-field input {
+    border-bottom: none;
+  }
+}
