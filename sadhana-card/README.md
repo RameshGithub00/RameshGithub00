@@ -1,31 +1,31 @@
 # Sadhana Card — Chanting Recorder
 
-A simple monthly **Sadhana Card** for logging daily chanting (or any practice), modeled on the paper cards used in many communities.
+A **single HTML file** (`index.html`) for logging daily chanting in the familiar monthly Sadhana Card layout.
+
+No build step, no npm — open the file in a browser or host it anywhere.
 
 ## Features
 
-- Month view with **Name**, **Subject**, and a three-column **Date / Count** grid
-- Counts saved automatically in your browser (`localStorage`)
+- Month view with **Name**, **Subject**, and three-column **Date | Count** grid
+- Saves automatically in your browser (`localStorage`)
 - **Fill empty** with your default count (e.g. 5)
-- **Right-click** a count cell to mark **Ekadashi** (configurable, e.g. 16)
-- **Print** a clean card, **export/import** JSON backups
-- Monthly totals: days logged and sum of counts
+- **Ekadashi**: long-press on mobile, or right-click on desktop
+- **Print**, **export/import** JSON backups
+- Monthly stats: days logged and total count
 
-## Run locally
+## On your computer
 
-```bash
-cd sadhana-card
-npm install
-npm run dev
-```
+Open `index.html` in Chrome, Firefox, or Safari (double-click or drag into the browser).
 
-Open the URL shown in the terminal (usually `http://localhost:5173`).
+## On your phone
 
-## Build
+1. Copy `index.html` to your phone (Google Drive, iCloud, email, USB, etc.).
+2. Open it with your browser (Chrome / Safari).
+3. Optional: **Add to Home Screen** so it opens like an app.
 
-```bash
-npm run build
-npm run preview
-```
+For a link you can bookmark without copying a file, upload `index.html` to any static host (Netlify drop, GitHub Pages, etc.).
 
-Static files are in `dist/` and can be hosted on any static host.
+## Data
+
+- Stored only on the device/browser you use.
+- Use **Export** on one device and **Import** on another to move records.
